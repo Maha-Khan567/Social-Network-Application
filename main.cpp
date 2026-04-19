@@ -3,11 +3,127 @@
 #include<fstream>
 #include<sstream>
 #include <string>
+#include<stdexcept>
 using namespace std;
-
+// Member 1 code
 class Date {
-    int day, month, year;
+private:
+	int day, month, year;
+	bool isLeapYear(int y)const {
+		return(y % 4 == 0 && y % 100 != 0) || (y % 400 == 0);
+	}
+	int daysInMonth(int m, int y) const {
+		if (m < 1 || m > 12)
+			throw invalid_argument("Invalid month!");
+		if (m == 2)
+			return isLeapYear(y) ? 29 : 28;
+		if (m == 4 || m == 6 || m == 9 || m == 11)
+			return 30;
+		return 31;
+	}
+	void validate(int d, int m, int y) const {
+		if (y < 0)
+			throw invalid_argument("Year cannot be negative.");
+		if (m < 1 || m > 12)
+			throw invalid_argument("Month must be between 1 and 12.");
+		int totalDays = daysInMonth(m, y);
+		if (d < 1 || d > totalDays)
+			throw invalid_argument("Invalid day for given month.");
+	}
+public:
+    Date() {
+	day = 0;
+	month = 0;
+	year = 0;
+    }
+	Date(int d, int m, int y) {
+		validate(d,m,y);
+		day = d;
+		month = m;
+		year = y;
+	}
+	void setDate(int d, int m, int y) {
+		validate(d, m, y);
+		day = d;
+		month = m;
+		year = y;
+	}
+	bool isSameDay(const Date& other) const {
+		return(day == other.day && month == other.month);
+	}
+	bool isEqual(const Date& other) const {
+		return (day == other.day && month == other.month && year == other.year);
+	}
+	bool isYesterday(const Date& other) const {
+		// Create a copy of "other" and increment it by 1 day
+		int d = other.day;
+		int m = other.month;
+		int y = other.year;
+		d++;
+		if (d > daysInMonth(m, y)) {
+			d = 1;
+			m++;
+			if (m > 12) {
+				m = 1;
+				y++;
+			}
+		}
+		return (day == d && month == m && year == y);
+	}
+	string toString() const {
+		return to_string(day) + "/" + to_string(month) + "/" + to_string(year);
+	}
+	void display() const {
+		cout << toString();
+	}
+	int getDay() const { 
+		return day;
+	}
+	int getMonth() const {
+		return month;
+	}
+	int getYear() const { 
+		return year;
+	}
 };
+class Entity {
+protected:
+	string id;
+	string name;
+	void validateID(const string& id) const {
+		if (id.empty())
+			throw invalid_argument("ID cannot be empty!");
+	}
+	void validateName(const string& name) const {
+		if (name.empty())
+			throw invalid_argument("Name cannot be empty!");
+	}
+public:
+	Entity(string id, string name) {
+		validateID(id);
+		validateName(name);
+		this->id = id;
+		this->name = name;
+	}
+	virtual ~Entity() {}
+	string getID() const { 
+		return id;
+	}
+	string getName() const { 
+		return name;
+	}
+	void setID(const string& newID) {
+		validateID(newID);
+		id = newID;
+	}
+	void setName(const string& newName) {
+		validateName(newName);
+		name = newName;
+	}
+	virtual void display() const = 0;
+};
+
+// Member 1 code ended
 class Activity
 {
 	int type;
