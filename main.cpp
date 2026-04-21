@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<fstream>
 #include<sstream>
@@ -208,7 +208,7 @@ public:
 };
 
 class Post {
-public:
+private:
     
     char* id;
     char* text;
@@ -221,7 +221,7 @@ public:
     Comment* comments[10];   // max 10
     int commentCount;
 
-    
+public:   
     Post(char* pid, char* ptext, int pday, int pmonth, int pyear,
         int ptype, char* ppostedBy, Activity* pact = nullptr)
     {
@@ -303,7 +303,12 @@ public:
         if (commentCount < 10)
             comments[commentCount++] = c;
     }
-
+    void viewPost()
+    {
+        cout << " --- "postedBy << act.displayActivity << text << "(" << day << "/" << month << " /" << year << ")\n";
+        displayComment(id);
+          
+    }
     ~Post()
     {
         delete[] id;
@@ -318,11 +323,46 @@ public:
             delete comments[i];
     }
 };
+//A Memory is a Post having pointer to original post.
+class Memory : public Post //inheritance
+{
+private:
+    Post* originalPost;  
+    //int time;//years agoo
+public:
+    Memory(char* id, char* text, int day, int month, int year,
+        char* postedBy, Post* original)
+        : Post(id, text, day, month, year,
+            original->getpostType(),    // ← take from original
+            postedBy,
+            nullptr)                    // Memory's OWN activity is null
+    {
+        originalPost = original;
+    }
+
+    Post* getOriginalPost() { return originalPost; }
+    void dispalyMemory()
+    {
+        cout<<"~~~"<<postedBy<<"shared a memory ~~~…"<<"("<<day<<"/"<<month<<" /"<<year<<")"<<text; 
+           
+           // (2 Years Ago)
+          
+    
+
+    }
+    void seeYourMemories() 
+    {
+        cout << "We hope you enjoy looking back and sharing your memories on Facebook,
+            from the most recent to those long ago.\n";
+
+    }
+    ~Memory() {
+        
+    }
+};
 
 
 
-
-class Memory {};
 class Page {};
 int main() {
     //SocialNetworkApp::Run() 
@@ -454,5 +494,6 @@ for (int i = 0; i < commentCount; i++)
 cout << "post1 comments:" << endl;
 for (int i = 0; i < posts[0]->getcommentCount(); i++)
     posts[0]->getcomment(i)->displayComment();
+cout << endl << dispalyMemory();
     return 0;
 }
