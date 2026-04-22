@@ -166,7 +166,7 @@ private:
    char *postedBy;
    char *txt;
 public:
-   Comment(char*a=nullptr, char* b = nullptr, char* c = nullptr, char* d = nullptr)
+   Comment(const char*a=nullptr,const char* b = nullptr,const char* c = nullptr,const char* d = nullptr)
    {
        commentId = new char[strlen(a)+1];
        strcpy(commentId, a);
@@ -309,6 +309,26 @@ public:
         displayComment(id);
           
     }
+ void display()
+ {
+     
+     if (activity != nullptr) {
+         cout << postedBy << " ";
+         activity->displayActivity();
+         cout << endl;
+         cout << "     \"" << text << "\"";
+     }
+     else {
+         cout << postedBy << " shared \"" << text << "\"";
+     }
+
+     
+     cout << " ...(" << day << "/" << month << "/" << year << ")" << endl;
+
+     
+     for (int i = 0; i < commentCount; i++)
+         comments[i]->displayComment();
+ }
     ~Post()
     {
         delete[] id;
@@ -328,41 +348,80 @@ class Memory : public Post //inheritance
 {
 private:
     Post* originalPost;  
-    //int time;//years agoo
+    
 public:
     Memory(char* id, char* text, int day, int month, int year,
         char* postedBy, Post* original)
         : Post(id, text, day, month, year,
-            original->getpostType(),    // ← take from original
+            original->getpostType(),   
             postedBy,
-            nullptr)                    // Memory's OWN activity is null
+            nullptr)                   
     {
         originalPost = original;
     }
 
     Post* getOriginalPost() { return originalPost; }
-    void dispalyMemory()
-    {
-        cout<<"~~~"<<postedBy<<"shared a memory ~~~…"<<"("<<day<<"/"<<month<<" /"<<year<<")"<<text; 
-           
-           // (2 Years Ago)
-          
+    void displayMemory()
+ {
+     cout << "~~~ " << getpostedBy() << " shared a memory ~~~ ...(";
+     cout << getday() << "/" << getmonth() << "/" << getyear() << ")" << endl;
+     cout << "\"" << gettext() << "\"" << endl;
+
+     int yearDiff = getyear() - originalPost->getyear();
+     cout << "(" << yearDiff << " Years Ago)" << endl;
+
+     originalPost->display();
+ }
     
-
-    }
-    void seeYourMemories() 
-    {
-        cout << "We hope you enjoy looking back and sharing your memories on Facebook,
-            from the most recent to those long ago.\n";
-
-    }
     ~Memory() {
         
     }
 };
 
 
+void viewPost(const char* postID, Post** posts, int postCount)
 
+{
+
+    bool found = false;
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            posts[i]->display();
+            found = true;
+            
+            break;
+        }
+    }
+    if (!found) cout << "Post not found\n";
+}
+void seeYourMemories(Post** posts, int postCount,
+    const char* currentUserID,
+    int sysDay, int sysMonth, int sysYear)
+{
+    cout << "We hope you enjoy looking back...\n";
+    bool found = false;
+
+    for (int i = 0; i < postCount; i++)
+    {
+
+        if (strcmp(posts[i]->getpostedBy(), currentUserID) != 0) continue;
+
+
+        if (posts[i]->getday() == sysDay &&
+            posts[i]->getmonth() == sysMonth &&
+            posts[i]->getyear() != sysYear)
+        {
+            int yearDiff = sysYear - posts[i]->getyear();
+            cout << "On this Day " << yearDiff << " Years Ago" << endl;
+            cout << "---" << endl;
+            posts[i]->display();
+            found = true;
+        }
+    }
+    if (!found) cout << "No memories found.\n";
+}
 class Page {};
 int main() {
     //SocialNetworkApp::Run() 
