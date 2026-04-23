@@ -437,7 +437,7 @@ public:
    
     Comment* getcomment(int i) { return comments[i]; }
      
-    void addLike(char* entityId)
+    void addLike(const char* entityId)
     {
         if (likedCount < 10) {
             likedBy[likedCount] = new char[strlen(entityId) + 1];
@@ -450,12 +450,7 @@ public:
         if (commentCount < 10)
             comments[commentCount++] = c;
     }
-    void viewPost()
-    {
-        cout << " --- "postedBy << act.displayActivity << text << "(" << day << "/" << month << " /" << year << ")\n";
-        displayComment(id);
-          
-    }
+   
  void display()
  {
      
@@ -543,6 +538,31 @@ void viewPost(const char* postID, Post** posts, int postCount)
     }
     if (!found) cout << "Post not found\n";
 }
+void likePost(const char* postID, Post** posts,
+    int postCount, const char* userID)
+{
+
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+
+            for (int j = 0; j < posts[i]->getlikedCount(); j++)
+            {
+                if (strcmp(posts[i]->getlikedBy(j), userID) == 0)
+                {
+                    cout << "Already liked!\n";
+                    return;
+                }
+            }
+
+            posts[i]->addLike(userID);
+            cout << "Post liked!\n";
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
 void seeYourMemories(Post** posts, int postCount,
     const char* currentUserID,
     int sysDay, int sysMonth, int sysYear)
@@ -570,6 +590,59 @@ void seeYourMemories(Post** posts, int postCount,
     if (!found) cout << "No memories found.\n";
 }
 class Page {};
+void viewLikedList(const char* postID, Post** posts, int postCount)
+{
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            cout << "---------------------------------------" << endl;
+            cout << "Post Liked By:" << endl;
+            int count = posts[i]->getlikedCount();
+            if (count == 0)
+                cout << "No likes yet." << endl;
+            for (int j = 0; j < count; j++)
+                cout << posts[i]->getlikedBy(j) << endl;
+            cout << "---------------------------------------" << endl;
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
+
+void postComment(const char* postID, const char* userID,
+    const char* text, Post** posts, int postCount)
+{
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            char newId[20];  strcpy(newId, "cnew");
+            Comment* newComment = new Comment("cnew", postID, userID, text);
+            posts[i]->addComment(newComment);
+            cout << "Comment added!\n";
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
+void shareMemory(const char* postID, const char* userID,
+    const char* text, Post** posts, int postCount,
+    int sysDay, int sysMonth, int sysYear)
+{
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            Memory* mem = new Memory("mem1", text, sysDay, sysMonth,
+                sysYear, userID, posts[i]);
+            mem->displayMemory();
+            delete mem;
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
 int main() {
     //SocialNetworkApp::Run() 
 	 //Reading data from Posts.txt
@@ -700,6 +773,19 @@ for (int i = 0; i < commentCount; i++)
 cout << "post1 comments:" << endl;
 for (int i = 0; i < posts[0]->getcommentCount(); i++)
     posts[0]->getcomment(i)->displayComment();
-cout << endl << dispalyMemory();
+ viewPost("post1", posts, postCount);
+
+ viewLikedList("post5", posts, postCount);
+ likePost("post5", posts, postCount, "u7");
+ viewLikedList("post5", posts, postCount);
+
+
+
+ viewPost("post4", posts, postCount);
+
+ seeYourMemories(posts, postCount, "u7", 15, 11, 2017);
+ shareMemory("post10", "u7", "Never thought I will be specialist...",
+     posts, postCount, 15, 11, 2017);
+    
     return 0;
 }
