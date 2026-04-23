@@ -5,6 +5,9 @@
 #include <string>
 #include<stdexcept>
 using namespace std;
+class Page;
+class Post;
+class User;
 // Member 1 code
 class Date {
 private:
@@ -278,7 +281,7 @@ class Activity
 public:
     int getType() { return type; }
     char* getValue() { return value; }
-	Activity(int t=0,char* v=nullptr)
+	Activity(int t=0,const char* v=nullptr)
 	{
 		type=t;
         if (v != nullptr) {
@@ -492,7 +495,7 @@ private:
     Post* originalPost;  
     
 public:
-    Memory(char* id, char* text, int day, int month, int year,
+    Memory(constchar* id,const char* text, int day, int month, int year,const
         char* postedBy, Post* original)
         : Post(id, text, day, month, year,
             original->getpostType(),   
@@ -520,7 +523,37 @@ public:
     }
 };
 
-
+class Page : public Entity {
+private:
+    Post** posts;
+    int postCount;
+public:
+    Page(string id, string name) : Entity(id, name) {
+        posts = nullptr;
+        postCount = 0;
+    }
+    void addPost(Post* p) {
+        Post** temp = new Post * [postCount + 1];
+        for (int i = 0; i < postCount; i++)
+            temp[i] = posts[i];
+        temp[postCount] = p;
+        delete[] posts;
+        posts = temp;
+        postCount++;
+    }
+    void viewPage() {
+        cout << "---" << name << "---" << endl;
+        for (int i = 0; i < postCount; i++)
+            posts[i]->display();
+    }
+    void display() const override {
+        cout << id << " - " << name << endl;
+    }
+    ~Page() {
+        delete[] posts;
+    }
+};
+//functions:
 void viewPost(const char* postID, Post** posts, int postCount)
 
 {
@@ -589,7 +622,7 @@ void seeYourMemories(Post** posts, int postCount,
     }
     if (!found) cout << "No memories found.\n";
 }
-class Page {};
+
 void viewLikedList(const char* postID, Post** posts, int postCount)
 {
     for (int i = 0; i < postCount; i++)
@@ -644,7 +677,7 @@ void shareMemory(const char* postID, const char* userID,
     cout << "Post not found!\n";
 }
 int main() {
-    //SocialNetworkApp::Run() 
+    
 	 //Reading data from Posts.txt
     ifstream fin("Posts.txt");
     if (!fin) {
