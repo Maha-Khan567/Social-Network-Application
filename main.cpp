@@ -122,6 +122,85 @@ public:
 	}
 	virtual void display() const = 0;
 };
+class User :public Entity {
+private:
+	User** friends;
+	int friendCount;
+	Page** likedPages;
+	int likedCount;
+	Post** posts;
+	int postCount;
+public:
+	User(string id, string name) :Entity(id, name) {
+		friends = nullptr;
+		likedPages = nullptr;
+		posts = nullptr;
+		friendCount = 0;
+		likedCount = 0;
+		postCount = 0;
+	}
+	void addFriend(User* u) {
+		for (int i = 0; i < friendCount; i++) {
+			if (friends[i] == u)
+				return;
+		}
+		User** temp = new User * [friendCount + 1];
+		for (int i = 0; i < friendCount; i++)
+			temp[i] = friends[i];
+		temp[friendCount] = u;
+		delete[] friends;
+		friends = temp;
+		friendCount++;
+	}
+	void addPost(Post* p) {
+		Post** temp = new Post * [postCount + 1];
+		for (int i = 0; i < postCount; i++)
+			temp[i] = posts[i];
+		temp[postCount] = p;
+		delete[] posts;
+		posts = temp;
+		postCount++;
+	}
+	void addLikedPage(Page* p) {
+		for (int i = 0; i < likedCount; i++) {
+			if (likedPages[i] == p)
+				return;
+		}
+		Page** temp = new Page * [likedCount + 1];
+		for (int i = 0; i < likedCount; i++)
+			temp[i] = likedPages[i];
+		temp[likedCount] = p;
+		delete[] likedPages;
+		likedPages = temp;
+		likedCount++;
+	}
+	void display() const override {
+		cout << id << " - " << name << endl;
+	}
+	~User() {
+		delete[] friends;
+		delete[] likedPages;
+		delete[] posts;
+	}
+	int getFriendCount() const { 
+		return friendCount; 
+	}
+	User** getFriends() const { 
+		return friends;
+	}
+	int getLikedCount() const { 
+		return likedCount;
+	}
+	Page** getLikedPages() const { 
+		return likedPages;
+	}
+	int getPostCount() const { 
+		return postCount;
+	}
+	Post** getPosts() const { 
+		return posts;
+	}
+};
 class SocialNetworkApp {
 private:
 	User** users;
