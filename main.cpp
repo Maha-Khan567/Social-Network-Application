@@ -122,7 +122,75 @@ public:
 	}
 	virtual void display() const = 0;
 };
-
+class SocialNetworkApp {
+private:
+	User** users;
+	int userCount;
+	User* currentUser;
+	Date currentDate;
+public:
+	SocialNetworkApp() {
+		users = nullptr;
+		userCount = 0;
+		currentUser = nullptr;
+	}
+	void addUser(User* u) {
+		for (int i = 0; i < userCount; i++) {
+			if (users[i]->getID() == u->getID())
+				return;
+		}
+		User** temp = new User * [userCount + 1];
+		for (int i = 0; i < userCount; i++)
+			temp[i] = users[i];
+		temp[userCount] = u;
+		delete[] users;
+		users = temp;
+		userCount++;
+	}
+	User* findUser(string id) {
+		for (int i = 0; i < userCount; i++) {
+			if (users[i]->getID() == id)
+				return users[i];
+		}
+		return nullptr;
+	}
+	void setCurrentUser(string id) {
+		User* u = findUser(id);
+		if (!u) {
+			cout << "User not found!\n";
+			return;
+		}
+		currentUser = u;
+		cout << u->getName() << " successfully set as Current User\n";
+	}
+	void viewFriendList(string id) {
+		User* u = findUser(id);
+		if (!u) {
+			cout << "User not found!\n";
+			return;
+		}
+		cout << "-------------------------------------------------------------------------------------------------------------\n";
+		cout << u->getName() << " - Friend List\n\n";
+		User** friends = u->getFriends();
+		int count = u->getFriendCount();
+		for (int i = 0; i < count; i++) {
+			friends[i]->display();
+		}
+		cout << "-------------------------------------------------------------------------------------------------------------\n";
+		}
+	~SocialNetworkApp() {
+		for (int i = 0; i < userCount; i++) {
+			delete users[i];
+		}
+		delete[] users;
+	}
+	void setSystemDate(int d, int m, int y) {
+		currentDate = Date(d, m, y);
+		cout << "System Date: ";
+		currentDate.display();
+		cout << endl;
+	}
+};
 // Member 1 code ended
 class Activity
 {
