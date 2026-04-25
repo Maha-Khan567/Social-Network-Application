@@ -262,19 +262,37 @@ public:
 			friends[i]->display();
 		}
 		cout << "-------------------------------------------------------------------------------------------------------------\n";
-		}
-	~SocialNetworkApp() {
-		for (int i = 0; i < userCount; i++) {
-			delete users[i];
-		}
-		delete[] users;
 	}
-	void setSystemDate(int d, int m, int y) {
-		currentDate = Date(d, m, y);
-		cout << "System Date: ";
-		currentDate.display();
-		cout << endl;
-	}
+	void viewHome() {
+	     if (!currentUser) {
+		    cout << "No current user.\n";
+		    return;
+	     }
+	     cout << "---- Home ----\n";
+	     User** friends = currentUser->getFriends();
+	     int count = currentUser->getFriendCount();
+	     for (int i = 0; i < count; i++) {
+		    Post** posts = friends[i]->getPosts();
+		    int postCount = friends[i]->getPostCount();
+		    for (int j = 0; j < postCount; j++)
+		    {
+		     	posts[j]->display();
+			    cout << endl;
+		    }
+	     }
+    }
+	   ~SocialNetworkApp() {
+		   for (int i = 0; i < userCount; i++) {
+			  delete users[i];
+		   }
+		   delete[] users;
+	   }
+	   void setSystemDate(int d, int m, int y) {
+		   currentDate = Date(d, m, y);
+		   cout << "System Date: ";
+		   currentDate.display();
+		   cout << endl;
+	  }
 };
 // Member 1 code ended
 class Activity
