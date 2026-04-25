@@ -253,8 +253,12 @@ public:
 		}
 		cout << "-------------------------------------------------------------------------------------------------------------\n";
 		cout << u->getName() << " - Friend List\n\n";
-		User** friends = u->getFriends();
 		int count = u->getFriendCount();
+		User** friends = u->getFriends();
+		if (count == 0) {
+	        cout << "No friends found\n";
+	        return;
+        }
 		for (int i = 0; i < count; i++) {
 			friends[i]->display();
 		}
