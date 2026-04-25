@@ -58,7 +58,6 @@ public:
 		return (day == other.day && month == other.month && year == other.year);
 	}
 	bool isYesterday(const Date& other) const {
-		// Create a copy of "other" and increment it by 1 day
 		int d = other.day;
 		int m = other.month;
 		int y = other.year;
