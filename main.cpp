@@ -293,6 +293,54 @@ public:
 		   currentDate.display();
 		   cout << endl;
 	  }
+      void viewProfile() {
+	       if (!currentUser) {
+		   cout << "No current user.\n";
+		   return;
+	   }
+	   cout << "---- " << currentUser->getName() << " Profile ----\n";
+	   Post** posts = currentUser->getPosts();
+	   int count = currentUser->getPostCount();
+	   if (count == 0) {
+		   cout << "No posts to show.\n";
+		   return;
+	   }
+	   for (int i = 0; i < count; i++) {
+		   posts[i]->display();
+		   cout << endl;
+	   }
+       }
+       void Run() {
+	   int choice;
+	   string id;
+	   do {
+		   cout << "\n1. Set Current User\n";
+		   cout << "2. View Friend List\n";
+		   cout << "3. View Profile\n";
+		   cout << "4. View Home\n";
+		   cout << "0. Exit\n";
+		   cout << "Enter choice: ";
+		   cin >> choice;
+		   switch (choice) {
+		   case 1:
+			  cout << "Enter User ID: ";
+			  cin >> id;
+			  setCurrentUser(id);
+			  break;
+		   case 2:
+			  cout << "Enter User ID: ";
+			  cin >> id;
+			  viewFriendList(id);
+			  break;
+		   case 3:
+			  viewProfile();
+			  break;
+		   case 4:
+			  viewHome();
+			  break;
+		    }
+	       } while (choice != 0);
+    }
 };
 // Member 1 code ended
 class Activity
