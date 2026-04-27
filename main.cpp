@@ -263,24 +263,54 @@ public:
 		}
 		cout << "-------------------------------------------------------------------------------------------------------------\n";
 	}
-	void viewHome() {
-	     if (!currentUser) {
-		    cout << "No current user.\n";
-		    return;
-	     }
-	     cout << "---- Home ----\n";
-	     User** friends = currentUser->getFriends();
-	     int count = currentUser->getFriendCount();
-	     for (int i = 0; i < count; i++) {
-		    Post** posts = friends[i]->getPosts();
-		    int postCount = friends[i]->getPostCount();
-		    for (int j = 0; j < postCount; j++)
-		    {
-		     	posts[j]->display();
-			    cout << endl;
-		    }
-	     }
-    }
+void viewHome() {
+	if (!currentUser) {
+		cout << "No current user.\n";
+		return;
+	}
+	cout << "---- Home ----\n";
+	User** friends = currentUser->getFriends();
+	int friendCount = currentUser->getFriendCount();
+	for (int i = 0; i < friendCount; i++) {
+		if (!friends[i]) 
+			continue;
+		Post** posts = friends[i]->getPosts();
+		int postCount = friends[i]->getPostCount();
+		if (!posts) 
+			continue;
+		for (int j = 0; j < postCount; j++) {
+			if (!posts[j]) 
+				continue;
+			Date postDate(posts[j]->getday(),posts[j]->getmonth(),posts[j]->getyear());
+			if (postDate.isEqual(currentDate) || currentDate.isYesterday(postDate)) {
+				posts[j]->display();
+				cout << endl;
+			}
+		}
+	}
+	Page** pages = currentUser->getLikedPages();
+	int pageCount = currentUser->getLikedCount();
+	for (int i = 0; i < pageCount; i++) {
+		if (!pages[i]) 
+			continue;
+		Post** posts = pages[i]->getPosts();
+		int postCount = pages[i]->getPostCount();
+		if (!posts) 
+			continue;
+		for (int j = 0; j < postCount; j++) {
+			if (!posts[j]) 
+				continue;
+			Date postDate(posts[j]->getday(),
+				posts[j]->getmonth(),
+				posts[j]->getyear());
+			if (postDate.isEqual(currentDate) ||
+				currentDate.isYesterday(postDate)) {
+				posts[j]->display();
+				cout << endl;
+			}
+		}
+	}
+}
 	   ~SocialNetworkApp() {
 		   for (int i = 0; i < userCount; i++) {
 			  delete users[i];
