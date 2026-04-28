@@ -1143,6 +1143,10 @@ for (int i = 0; i < posts[0]->getcommentCount(); i++)
  seeYourMemories(posts, postCount, "u7", 15, 11, 2017);
  shareMemory("post10", "u7", "Never thought I will be specialist...",
      posts, postCount, 15, 11, 2017);
-    
+	// all implementation in one go
+    SocialNetworkApp app;
+    app.loadFromFiles();
+    app.setSystemDate(14, 11, 2017);
+    app.Run();
     return 0;
 }
