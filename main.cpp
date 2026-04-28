@@ -9,6 +9,7 @@ using namespace std;
 class Page;
 class Post;
 class User;
+class Comment;
 // Member 1 code
 class Date {
 private:
