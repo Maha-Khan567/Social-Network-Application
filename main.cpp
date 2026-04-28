@@ -451,14 +451,151 @@ void addPage(Page* p) {
     pages = temp;
     pageCount++;
 }
-
 Page* findPage(string id) {
     for (int i = 0; i < pageCount; i++)
         if (pages[i]->getID() == id)
             return pages[i];
     return nullptr;
 }
-      
+void loadFromFiles() {
+    // Load Pages
+    ifstream pgFile("Pages.txt");
+    int pgCount;
+    pgFile >> pgCount;
+    pages = new Page * [pgCount];
+    pageCount = 0;
+    string pgId, pgName;
+    pgFile.ignore();
+    for (int i = 0; i < pgCount; i++) {
+        pgFile >> pgId;
+        pgFile.ignore();
+        getline(pgFile, pgName);
+        pages[pageCount++] = new Page(pgId, pgName);
+    }
+    pgFile.close();
+    // Load Posts
+    ifstream postFile("Posts.txt");
+    int pCount;
+    postFile >> pCount;
+    posts = new Post * [pCount];
+    postCount = 0;
+    for (int i = 0; i < pCount; i++) {
+        char pId[20];
+		pText[300];
+		pPostedBy[20];
+        int pDay, pMonth, pYear, pType;
+        postFile >> pType >> pId >> pDay >> pMonth >> pYear;
+        postFile.ignore();
+        postFile.getline(pText, 300);
+        Activity* act = nullptr;
+        if (pType == 2) {
+            char actVal[100];
+            int actType;
+            postFile >> actType;
+            postFile.ignore();
+            postFile.getline(actVal, 100);
+            act = new Activity(actType, actVal);
+        }
+        postFile >> pPostedBy;
+        posts[postCount] = new Post(pId, pText, pDay, pMonth, pYear, pType, pPostedBy, act);
+        char likeToken[20];
+        while (postFile >> likeToken) {
+            if (strcmp(likeToken, "-1") == 0) break;
+            posts[postCount]->addLike(likeToken);
+        }
+        postCount++;
+    }
+    postFile.close();
+    // Load Comments
+    ifstream cmtFile("Comments.txt");
+    int cCount;
+    cmtFile >> cCount;
+    comments = new Comment * [cCount];
+    commentCount = 0;
+    for (int i = 0; i < cCount; i++) {
+        char cId[20];
+		cPostId[20];
+		cPostedBy[20];
+		cTxt[300];
+        cmtFile >> cId >> cPostId >> cPostedBy;
+        cmtFile.ignore();
+        cmtFile.getline(cTxt, 300);
+        comments[commentCount++] = new Comment(cId, cPostId, cPostedBy, cTxt);
+    }
+    cmtFile.close();
+    // Link comments to posts
+    for (int i = 0; i < commentCount; i++)
+        for (int j = 0; j < postCount; j++)
+            if (strcmp(comments[i]->getpostId(), posts[j]->getId()) == 0) {
+                posts[j]->addComment(comments[i]);
+                break;
+            }
+
+    loadUsers();
+    linkPostsToOwners();
+}
+void loadUsers() {
+    ifstream userFile("Users.txt");
+    int uCount;
+    userFile >> uCount;
+    userFile.ignore();
+    string userLines[20];
+    for (int i = 0; i < uCount; i++)
+        getline(userFile, userLines[i]);
+    userFile.close();
+    // users created
+    for (int i = 0; i < uCount; i++) {
+        istringstream ss(userLines[i]);
+        string uId, token, uName;
+        ss >> uId;
+        uName = "";
+        while (ss >> token) {
+            if (token == "-1" || (token[0] == 'u' && isdigit(token[1])) || (token[0] == 'p' && isdigit(token[1])))
+                break;
+            if (!uName.empty()) uName += " ";
+            uName += token;
+        }
+        addUser(new User(uId, uName));
+    }
+    // linked friends and liked pages
+    for (int i = 0; i < uCount; i++) {
+        istringstream ss(userLines[i]);
+        string uId, token;
+        ss >> uId;
+        User* u = findUser(uId);
+        // skip tokens names
+        while (ss >> token) {
+            if (token == "-1" || (token[0] == 'u' && isdigit(token[1])) || (token[0] == 'p' && isdigit(token[1])))
+                break;
+        }
+        while (token != "-1") {
+            User* friendUser = findUser(token);
+            if (friendUser)
+				u->addFriend(friendUser);
+            if (!(ss >> token)) 
+				break;
+        }
+        while (ss >> token && token != "-1") {
+            Page* likedPage = findPage(token);
+            if (likedPage) 
+				u->addLikedPage(likedPage);
+        }
+    }
+}
+void linkPostsToOwners() {
+    for (int i = 0; i < postCount; i++) {
+        string ownerID = string(posts[i]->getpostedBy());
+        User* ownerUser = findUser(ownerID);
+        if (ownerUser) 
+		{ 
+			ownerUser->addPost(posts[i]);
+						continue; 
+		}
+        Page* ownerPage = findPage(ownerID);
+        if (ownerPage) 
+			ownerPage->addPost(posts[i]);
+    }
+}
 };
 // Member 1 code ended
 class Activity
