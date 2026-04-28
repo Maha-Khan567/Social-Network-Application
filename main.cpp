@@ -1,5 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
+#include<cstring>
 #include<fstream>
 #include<sstream>
 #include <string>
@@ -209,12 +210,24 @@ private:
 	int userCount;
 	User* currentUser;
 	Date currentDate;
+	Page** pages;
+	int pageCount;
+	Post** posts;
+	int postCount;
+	Comment** comments;
+	int commentCount;
 public:
-	SocialNetworkApp() {
-		users = nullptr;
-		userCount = 0;
-		currentUser = nullptr;
-	}
+SocialNetworkApp() {
+    users = nullptr;
+    userCount = 0;
+    currentUser = nullptr;
+    pages = nullptr;
+    pageCount = 0;
+    posts = nullptr;
+    postCount = 0;
+    comments = nullptr;
+    commentCount = 0;
+}
 	void addUser(User* u) {
 		for (int i = 0; i < userCount; i++) {
 			if (users[i]->getID() == u->getID())
@@ -311,12 +324,101 @@ void viewHome() {
 		}
 	}
 }
-	   ~SocialNetworkApp() {
-		   for (int i = 0; i < userCount; i++) {
-			  delete users[i];
-		   }
-		   delete[] users;
-	   }
+void Run() {
+    int choice;
+    string id, text;
+    do {
+        cout << "\n1. Set Current User\n";
+        cout << "2. View Friend List\n";
+        cout << "3. View Profile\n";
+        cout << "4. View Home\n";
+        cout << "5. View Post\n";
+        cout << "6. Like Post\n";
+        cout << "7. Post Comment\n";
+        cout << "8. View Liked List\n";
+        cout << "9. See Your Memories\n";
+        cout << "10. Share Memory\n";
+        cout << "0. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        switch (choice) {
+        case 1: 
+			cout << "Enter User ID: ";
+			cin >> id; 
+			setCurrentUser(id);
+			break;
+        case 2: 
+			cout << "Enter User ID: "; 
+			cin >> id; 
+			viewFriendList(id);
+			break;
+        case 3:
+			viewProfile();
+			break;
+        case 4:
+			viewHome();
+			break;
+        case 5:
+			cout << "Enter Post ID: ";
+			cin >> id;
+            viewPost(id.c_str(), posts, postCount);
+			break;
+        case 6:
+			if (!currentUser) { 
+			cout << "Set a user first.\n"; 
+			break;
+		}
+              cout << "Enter Post ID: ";
+			cin >> id;
+              likePost(id.c_str(), posts, postCount, currentUser->getID().c_str());
+			break;
+        case 7: if (!currentUser) 
+		{ 
+			cout << "Set a user first.\n"; 
+			break;
+		}
+              cout << "Enter Post ID: ";
+			cin >> id;
+              cout << "Enter comment: ";
+			cin.ignore(); getline(cin, text);
+              postComment(id.c_str(), currentUser->getID().c_str(), text.c_str(), posts, postCount); 
+			break;
+        case 8: 
+			cout << "Enter Post ID: ";
+			cin >> id;
+            viewLikedList(id.c_str(), posts, postCount); 
+			break;
+        case 9: if (!currentUser)
+		{ 
+			cout << "Set a user first.\n";
+			break; 
+		}
+              seeYourMemories(posts, postCount, currentUser->getID().c_str(), currentDate.getDay(), currentDate.getMonth(), currentDate.getYear()); 
+			break;
+        case 10: if (!currentUser) {
+			cout << "Set a user first.\n"; 
+			break;
+		}
+               cout << "Enter Post ID to share as memory: ";
+			cin >> id;
+               cout << "Enter memory text: "; 
+			cin.ignore(); 
+			getline(cin, text);
+               shareMemory(id.c_str(), currentUser->getID().c_str(), text.c_str(), posts, postCount, currentDate.getDay(), currentDate.getMonth(), currentDate.getYear()); 
+			break;
+        }
+    } while (choice != 0);
+}
+~SocialNetworkApp() {
+    for (int i = 0; i < commentCount; i++) delete comments[i];
+    delete[] comments;
+    for (int i = 0; i < postCount; i++) delete posts[i];
+    delete[] posts;
+    for (int i = 0; i < pageCount; i++) delete pages[i];
+    delete[] pages;
+    for (int i = 0; i < userCount; i++) delete users[i];
+    delete[] users;
+}
 	   void setSystemDate(int d, int m, int y) {
 		   currentDate = Date(d, m, y);
 		   cout << "System Date: ";
@@ -340,37 +442,22 @@ void viewHome() {
 		   cout << endl;
 	   }
        }
-       void Run() {
-	   int choice;
-	   string id;
-	   do {
-		   cout << "\n1. Set Current User\n";
-		   cout << "2. View Friend List\n";
-		   cout << "3. View Profile\n";
-		   cout << "4. View Home\n";
-		   cout << "0. Exit\n";
-		   cout << "Enter choice: ";
-		   cin >> choice;
-		   switch (choice) {
-		   case 1:
-			  cout << "Enter User ID: ";
-			  cin >> id;
-			  setCurrentUser(id);
-			  break;
-		   case 2:
-			  cout << "Enter User ID: ";
-			  cin >> id;
-			  viewFriendList(id);
-			  break;
-		   case 3:
-			  viewProfile();
-			  break;
-		   case 4:
-			  viewHome();
-			  break;
-		    }
-	       } while (choice != 0);
-    }
+void addPage(Page* p) {
+    Page** temp = new Page * [pageCount + 1];
+    for (int i = 0; i < pageCount; i++) temp[i] = pages[i];
+    temp[pageCount] = p;
+    delete[] pages;
+    pages = temp;
+    pageCount++;
+}
+
+Page* findPage(string id) {
+    for (int i = 0; i < pageCount; i++)
+        if (pages[i]->getID() == id)
+            return pages[i];
+    return nullptr;
+}
+      
 };
 // Member 1 code ended
 class Activity
