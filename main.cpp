@@ -205,6 +205,287 @@ public:
 		return posts;
 	}
 };
+
+// Member 1 code ended
+class Activity
+{
+	int type;
+	char* value;
+public:
+    int getType() { return type; }
+    char* getValue() { return value; }
+	Activity(int t=0,const char* v=nullptr)
+	{
+		type=t;
+        if (v != nullptr) {
+            value = new char[strlen(v) + 1];
+            strcpy(value, v);
+        }
+        else {
+            value = nullptr;
+        }
+	}
+    void diplayActivity()
+    {
+        switch (type) {
+        case 1: cout << "is feeling " << value;        break;
+        case 2: cout << "is thinking about " << value; break;
+        case 3: cout << "is making " << value;         break;
+        case 4: cout << "is celebrating " << value;    break;
+        }
+     }
+	 ~Activity()
+	 {
+		 delete[] value;
+}
+
+};
+class Comment
+{
+private:
+   
+   char *commentId;
+   char *postId;
+   char *postedBy;
+   char *txt;
+public:
+   Comment(const char*a=nullptr,const char* b = nullptr,const char* c = nullptr,const char* d = nullptr)
+   {
+       commentId = new char[strlen(a)+1];
+       strcpy(commentId, a);
+       postId = new char[strlen(b) + 1];
+       strcpy(postId, b);
+       postedBy = new char[strlen(c) + 1];
+       strcpy(postedBy, c);
+       txt = new char[strlen(d) + 1];
+       strcpy(txt, d);
+   }
+   char* getcommentId()
+   {
+       return commentId;
+   }
+   char* getpostId()
+   {
+       return postId;
+   }
+   char* getpostedBy()
+   {
+       return postedBy;
+   }
+   char* gettxt()
+   {
+       return txt;
+   }
+   void displayComment()
+   {
+       
+       cout <<postedBy << " wrote : \"" << txt <<"\""<< endl;
+   }
+   ~Comment()
+   {
+       delete[] commentId;
+       delete[] postId;
+       delete[] postedBy;
+       delete[] txt;
+   }
+};
+
+class Post {
+private:
+    
+    char* id;
+    char* text;
+    int day, month, year;
+    int postType;//1,2
+    Activity* activity;
+    char* postedBy;
+    char* likedBy[10];       // max 10
+    int likedCount;
+    Comment* comments[10];   // max 10
+    int commentCount;
+
+public:   
+    Post(char* pid, char* ptext, int pday, int pmonth, int pyear,
+        int ptype, char* ppostedBy, Activity* pact = nullptr)
+    {
+        id = new char[strlen(pid) + 1];
+        strcpy(id, pid);
+
+        text = new char[strlen(ptext) + 1];
+        strcpy(text, ptext);
+
+        day = pday;
+        month = pmonth;
+        year = pyear;
+        postType = ptype;
+
+        postedBy = new char[strlen(ppostedBy) + 1];
+        strcpy(postedBy, ppostedBy);
+
+        activity = pact;   
+
+        likedCount = 0;
+        commentCount = 0;
+
+        for (int i = 0; i < 10; i++) {
+            likedBy[i] = nullptr;
+            comments[i] = nullptr;
+        }
+    }
+    char* getId()
+    {
+        return id;
+    }
+    char* gettext()
+    {
+        return text;
+    }
+    int getday()
+    {
+        return day;
+    }
+    int getmonth()
+    {
+        return month;
+    }
+    int getyear()
+    {
+        return year;
+    }
+    int getpostType()
+    {
+        return postType;
+    }
+    char* getpostedBy()
+    {
+        return postedBy;
+    }
+    char* getlikedBy(int i)
+    {
+        return likedBy[i];
+    }
+    Activity *getactivity()
+    {
+        return activity;
+    }
+    int getlikedCount() { return likedCount; }
+    int getcommentCount() { return commentCount; }
+   
+    Comment* getcomment(int i) { return comments[i]; }
+     
+    void addLike(const char* entityId)
+    {
+        if (likedCount < 10) {
+            likedBy[likedCount] = new char[strlen(entityId) + 1];
+            strcpy(likedBy[likedCount], entityId);
+            likedCount++;
+        }
+    }
+    void addComment(Comment* c)
+    {
+        if (commentCount < 10)
+            comments[commentCount++] = c;
+    }
+   
+ void display()
+ {
+     
+     if (activity != nullptr) {
+         cout << postedBy << " ";
+         activity->displayActivity();
+         cout << endl;
+         cout << "     \"" << text << "\"";
+     }
+     else {
+         cout << postedBy << " shared \"" << text << "\"";
+     }
+
+     
+     cout << " ...(" << day << "/" << month << "/" << year << ")" << endl;
+
+     
+     for (int i = 0; i < commentCount; i++)
+         comments[i]->displayComment();
+ }
+    ~Post()
+    {
+        delete[] id;
+        delete[] text;
+        delete[] postedBy;
+        delete activity;
+
+        for (int i = 0; i < likedCount; i++)
+            delete[] likedBy[i];
+
+        for (int i = 0; i < commentCount; i++)
+            delete comments[i];
+    }
+};
+//A Memory is a Post having pointer to original post.
+class Memory : public Post //inheritance
+{
+private:
+    Post* originalPost;  
+    
+public:
+    Memory(constchar* id,const char* text, int day, int month, int year,const
+        char* postedBy, Post* original)
+        : Post(id, text, day, month, year,
+            original->getpostType(),   
+            postedBy,
+            nullptr)                   
+    {
+        originalPost = original;
+    }
+
+    Post* getOriginalPost() { return originalPost; }
+    void displayMemory()
+ {
+     cout << "~~~ " << getpostedBy() << " shared a memory ~~~ ...(";
+     cout << getday() << "/" << getmonth() << "/" << getyear() << ")" << endl;
+     cout << "\"" << gettext() << "\"" << endl;
+
+     int yearDiff = getyear() - originalPost->getyear();
+     cout << "(" << yearDiff << " Years Ago)" << endl;
+
+     originalPost->display();
+ }
+    
+    ~Memory() {
+        
+    }
+};
+
+class Page : public Entity {
+private:
+    Post** posts;
+    int postCount;
+public:
+    Page(string id, string name) : Entity(id, name) {
+        posts = nullptr;
+        postCount = 0;
+    }
+    void addPost(Post* p) {
+        Post** temp = new Post * [postCount + 1];
+        for (int i = 0; i < postCount; i++)
+            temp[i] = posts[i];
+        temp[postCount] = p;
+        delete[] posts;
+        posts = temp;
+        postCount++;
+    }
+    void viewPage() {
+        cout << "---" << name << "---" << endl;
+        for (int i = 0; i < postCount; i++)
+            posts[i]->display();
+    }
+    void display() const override {
+        cout << id << " - " << name << endl;
+    }
+    ~Page() {
+        delete[] posts;
+    }
+};
 class SocialNetworkApp {
 private:
 	User** users;
@@ -596,286 +877,6 @@ void linkPostsToOwners() {
 			ownerPage->addPost(posts[i]);
     }
 }
-};
-// Member 1 code ended
-class Activity
-{
-	int type;
-	char* value;
-public:
-    int getType() { return type; }
-    char* getValue() { return value; }
-	Activity(int t=0,const char* v=nullptr)
-	{
-		type=t;
-        if (v != nullptr) {
-            value = new char[strlen(v) + 1];
-            strcpy(value, v);
-        }
-        else {
-            value = nullptr;
-        }
-	}
-    void diplayActivity()
-    {
-        switch (type) {
-        case 1: cout << "is feeling " << value;        break;
-        case 2: cout << "is thinking about " << value; break;
-        case 3: cout << "is making " << value;         break;
-        case 4: cout << "is celebrating " << value;    break;
-        }
-     }
-	 ~Activity()
-	 {
-		 delete[] value;
-}
-
-};
-class Comment
-{
-private:
-   
-   char *commentId;
-   char *postId;
-   char *postedBy;
-   char *txt;
-public:
-   Comment(const char*a=nullptr,const char* b = nullptr,const char* c = nullptr,const char* d = nullptr)
-   {
-       commentId = new char[strlen(a)+1];
-       strcpy(commentId, a);
-       postId = new char[strlen(b) + 1];
-       strcpy(postId, b);
-       postedBy = new char[strlen(c) + 1];
-       strcpy(postedBy, c);
-       txt = new char[strlen(d) + 1];
-       strcpy(txt, d);
-   }
-   char* getcommentId()
-   {
-       return commentId;
-   }
-   char* getpostId()
-   {
-       return postId;
-   }
-   char* getpostedBy()
-   {
-       return postedBy;
-   }
-   char* gettxt()
-   {
-       return txt;
-   }
-   void displayComment()
-   {
-       
-       cout <<postedBy << " wrote : \"" << txt <<"\""<< endl;
-   }
-   ~Comment()
-   {
-       delete[] commentId;
-       delete[] postId;
-       delete[] postedBy;
-       delete[] txt;
-   }
-};
-
-class Post {
-private:
-    
-    char* id;
-    char* text;
-    int day, month, year;
-    int postType;//1,2
-    Activity* activity;
-    char* postedBy;
-    char* likedBy[10];       // max 10
-    int likedCount;
-    Comment* comments[10];   // max 10
-    int commentCount;
-
-public:   
-    Post(char* pid, char* ptext, int pday, int pmonth, int pyear,
-        int ptype, char* ppostedBy, Activity* pact = nullptr)
-    {
-        id = new char[strlen(pid) + 1];
-        strcpy(id, pid);
-
-        text = new char[strlen(ptext) + 1];
-        strcpy(text, ptext);
-
-        day = pday;
-        month = pmonth;
-        year = pyear;
-        postType = ptype;
-
-        postedBy = new char[strlen(ppostedBy) + 1];
-        strcpy(postedBy, ppostedBy);
-
-        activity = pact;   
-
-        likedCount = 0;
-        commentCount = 0;
-
-        for (int i = 0; i < 10; i++) {
-            likedBy[i] = nullptr;
-            comments[i] = nullptr;
-        }
-    }
-    char* getId()
-    {
-        return id;
-    }
-    char* gettext()
-    {
-        return text;
-    }
-    int getday()
-    {
-        return day;
-    }
-    int getmonth()
-    {
-        return month;
-    }
-    int getyear()
-    {
-        return year;
-    }
-    int getpostType()
-    {
-        return postType;
-    }
-    char* getpostedBy()
-    {
-        return postedBy;
-    }
-    char* getlikedBy(int i)
-    {
-        return likedBy[i];
-    }
-    Activity *getactivity()
-    {
-        return activity;
-    }
-    int getlikedCount() { return likedCount; }
-    int getcommentCount() { return commentCount; }
-   
-    Comment* getcomment(int i) { return comments[i]; }
-     
-    void addLike(const char* entityId)
-    {
-        if (likedCount < 10) {
-            likedBy[likedCount] = new char[strlen(entityId) + 1];
-            strcpy(likedBy[likedCount], entityId);
-            likedCount++;
-        }
-    }
-    void addComment(Comment* c)
-    {
-        if (commentCount < 10)
-            comments[commentCount++] = c;
-    }
-   
- void display()
- {
-     
-     if (activity != nullptr) {
-         cout << postedBy << " ";
-         activity->displayActivity();
-         cout << endl;
-         cout << "     \"" << text << "\"";
-     }
-     else {
-         cout << postedBy << " shared \"" << text << "\"";
-     }
-
-     
-     cout << " ...(" << day << "/" << month << "/" << year << ")" << endl;
-
-     
-     for (int i = 0; i < commentCount; i++)
-         comments[i]->displayComment();
- }
-    ~Post()
-    {
-        delete[] id;
-        delete[] text;
-        delete[] postedBy;
-        delete activity;
-
-        for (int i = 0; i < likedCount; i++)
-            delete[] likedBy[i];
-
-        for (int i = 0; i < commentCount; i++)
-            delete comments[i];
-    }
-};
-//A Memory is a Post having pointer to original post.
-class Memory : public Post //inheritance
-{
-private:
-    Post* originalPost;  
-    
-public:
-    Memory(constchar* id,const char* text, int day, int month, int year,const
-        char* postedBy, Post* original)
-        : Post(id, text, day, month, year,
-            original->getpostType(),   
-            postedBy,
-            nullptr)                   
-    {
-        originalPost = original;
-    }
-
-    Post* getOriginalPost() { return originalPost; }
-    void displayMemory()
- {
-     cout << "~~~ " << getpostedBy() << " shared a memory ~~~ ...(";
-     cout << getday() << "/" << getmonth() << "/" << getyear() << ")" << endl;
-     cout << "\"" << gettext() << "\"" << endl;
-
-     int yearDiff = getyear() - originalPost->getyear();
-     cout << "(" << yearDiff << " Years Ago)" << endl;
-
-     originalPost->display();
- }
-    
-    ~Memory() {
-        
-    }
-};
-
-class Page : public Entity {
-private:
-    Post** posts;
-    int postCount;
-public:
-    Page(string id, string name) : Entity(id, name) {
-        posts = nullptr;
-        postCount = 0;
-    }
-    void addPost(Post* p) {
-        Post** temp = new Post * [postCount + 1];
-        for (int i = 0; i < postCount; i++)
-            temp[i] = posts[i];
-        temp[postCount] = p;
-        delete[] posts;
-        posts = temp;
-        postCount++;
-    }
-    void viewPage() {
-        cout << "---" << name << "---" << endl;
-        for (int i = 0; i < postCount; i++)
-            posts[i]->display();
-    }
-    void display() const override {
-        cout << id << " - " << name << endl;
-    }
-    ~Page() {
-        delete[] posts;
-    }
 };
 //functions:
 void viewPost(const char* postID, Post** posts, int postCount)
