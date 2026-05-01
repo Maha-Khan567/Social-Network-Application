@@ -692,13 +692,18 @@ void Run() {
     } while (choice != 0);
 }
 ~SocialNetworkApp() {
-    for (int i = 0; i < commentCount; i++) delete comments[i];
+    for (int i = 0; i < commentCount; i++)
+    if (comments[i] != nullptr) 
+		delete comments[i];
     delete[] comments;
-    for (int i = 0; i < postCount; i++) delete posts[i];
+    for (int i = 0; i < postCount; i++)
+		delete posts[i];
     delete[] posts;
-    for (int i = 0; i < pageCount; i++) delete pages[i];
+    for (int i = 0; i < pageCount; i++) 
+		delete pages[i];
     delete[] pages;
-    for (int i = 0; i < userCount; i++) delete users[i];
+    for (int i = 0; i < userCount; i++) 
+		delete users[i];
     delete[] users;
 }
 	   void setSystemDate(int d, int m, int y) {
@@ -809,6 +814,7 @@ void loadFromFiles() {
         for (int j = 0; j < postCount; j++)
             if (strcmp(comments[i]->getpostId(), posts[j]->getId()) == 0) {
                 posts[j]->addComment(comments[i]);
+				 comments[i] = nullptr;
                 break;
             }
 
