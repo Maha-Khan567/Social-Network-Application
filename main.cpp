@@ -6,17 +6,21 @@
 #include <string>
 #include<stdexcept>
 using namespace std;
+// Forward declarations to allow classes to use them cuz used in classes
 class Page;
 class Post;
 class User;
 class Comment;
 // Member 1 code
+// Date class it stores day,month,year and it includes date comparision and validation checks
 class Date {
 private:
 	int day, month, year;
+    // Function returns true if year is a leap year
 	bool isLeapYear(int y)const {
 		return(y % 4 == 0 && y % 100 != 0) || (y % 400 == 0);
 	}
+    // Returns the number of days in each month
 	int daysInMonth(int m, int y) const {
 		if (m < 1 || m > 12)
 			throw invalid_argument("Invalid month!");
@@ -26,6 +30,7 @@ private:
 			return 30;
 		return 31;
 	}
+    // Validation for day,month and year
 	void validate(int d, int m, int y) const {
 		if (y < 0)
 			throw invalid_argument("Year cannot be negative.");
@@ -53,12 +58,15 @@ public:
 		month = m;
 		year = y;
 	}
+    // Returns true if day and month match
 	bool isSameDay(const Date& other) const {
 		return(day == other.day && month == other.month);
 	}
+    // Returns true if both dates are exactly the same
 	bool isEqual(const Date& other) const {
 		return (day == other.day && month == other.month && year == other.year);
 	}
+    // Returns true if date is yesterday
 	bool isYesterday(const Date& other) const {
 		int d = other.day;
 		int m = other.month;
@@ -77,9 +85,11 @@ public:
 	string toString() const {
 		return to_string(day) + "/" + to_string(month) + "/" + to_string(year);
 	}
+    // Getter functions
 	void display() const {
 		cout << toString();
 	}
+    // Mutator Functions
 	int getDay() const { 
 		return day;
 	}
@@ -90,6 +100,8 @@ public:
 		return year;
 	}
 };
+// Entity class
+// Has pure virtual display()
 class Entity {
 protected:
 	string id;
@@ -126,6 +138,7 @@ public:
 	}
 	virtual void display() const = 0;
 };
+// User class and maintains dynamic arrays of friends, liked pages, and posts
 class User :public Entity {
 private:
 	User** friends;
@@ -609,6 +622,7 @@ void shareMemory(const char* postID, const char* userID,const char* text, Post**
     }
     cout << "Post not found!\n";
 }
+// SocialNetworkApp the main driver class
 class SocialNetworkApp {
 private:
 	User** users;
@@ -633,6 +647,7 @@ SocialNetworkApp() {
     comments = nullptr;
     commentCount = 0;
 }
+// Adds a user to the app
 	void addUser(User* u) {
 		for (int i = 0; i < userCount; i++) {
 			if (users[i]->getID() == u->getID())
@@ -646,6 +661,7 @@ SocialNetworkApp() {
 		users = temp;
 		userCount++;
 	}
+    // Finds and returns a User by ID
 	User* findUser(string id) {
 		for (int i = 0; i < userCount; i++) {
 			if (users[i]->getID() == id)
@@ -653,6 +669,7 @@ SocialNetworkApp() {
 		}
 		return nullptr;
 	}
+    // Sets the active user by ID
 	void setCurrentUser(string id) {
 		User* u = findUser(id);
 		if (!u) {
@@ -662,6 +679,7 @@ SocialNetworkApp() {
 		currentUser = u;
 		cout << u->getName() << " successfully set as Current User\n";
 	}
+    // Displays the full friend list of the user
 	void viewFriendList(string id) {
 		User* u = findUser(id);
 		if (!u) {
@@ -681,6 +699,7 @@ SocialNetworkApp() {
 		}
 		cout << "-------------------------------------------------------------------------------------------------------------\n";
 	}
+// Displays posts from friends and liked pages posted today or yesterday
 void viewHome() {
 	if (!currentUser) {
 		cout << "No current user.\n";
@@ -729,6 +748,7 @@ void viewHome() {
 		}
 	}
 }
+// Main menu loop
 void Run() {
     int choice;
     string id, text;
@@ -829,6 +849,7 @@ void Run() {
 		delete users[i];
     delete[] users;
 }
+// Sets the system date used to filter home feed and detect memories
 	   void setSystemDate(int d, int m, int y) {
 		   currentDate = Date(d, m, y);
 		   cout << "System Date: ";
@@ -852,6 +873,7 @@ void Run() {
 		   cout << endl;
 	   }
        }
+// Adds a page
 void addPage(Page* p) {
     Page** temp = new Page * [pageCount + 1];
     for (int i = 0; i < pageCount; i++) temp[i] = pages[i];
@@ -860,12 +882,15 @@ void addPage(Page* p) {
     pages = temp;
     pageCount++;
 }
+// Finds and returns a Page by ID
 Page* findPage(string id) {
     for (int i = 0; i < pageCount; i++)
         if (pages[i]->getID() == id)
             return pages[i];
     return nullptr;
 }
+// Loads all data from Pages.txt, Posts.txt, Comments.txt, and Users.txt
+// Links comments to their posts, then calls loadUsers() and linkPostsToOwners()
 void loadFromFiles() {
     // Load Pages
     ifstream pgFile("Pages.txt");
