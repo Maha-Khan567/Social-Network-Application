@@ -305,8 +305,7 @@ private:
     int commentCount;
 
 public:   
-    Post(const char* pid,const char* ptext, int pday, int pmonth, int pyear,
-        int ptype,const char* ppostedBy, Activity* pact = nullptr)
+    Post(const char* pid,const char* ptext, int pday, int pmonth, int pyear, int ptype,const char* ppostedBy, Activity* pact = nullptr)
     {
         id = new char[strlen(pid) + 1];
         strcpy(id, pid);
@@ -368,10 +367,16 @@ public:
     {
         return activity;
     }
-    int getlikedCount() { return likedCount; }
-    int getcommentCount() { return commentCount; }
+    int getlikedCount() { 
+		return likedCount;
+	}
+    int getcommentCount() { 
+		return commentCount; 
+	}
    
-    Comment* getcomment(int i) { return comments[i]; }
+    Comment* getcomment(int i) { 
+		return comments[i];
+	}
      
     void addLike(const char* entityId)
     {
@@ -428,17 +433,14 @@ private:
     Post* originalPost;  
     
 public:
-    Memory(const char* id,const char* text, int day, int month, int year,const
-        char* postedBy, Post* original)
-        : Post(id, text, day, month, year,
-            original->getpostType(),   
-            postedBy,
-            nullptr)                   
+    Memory(const char* id,const char* text, int day, int month, int year,const char* postedBy, Post* original) : Post(id, text, day, month, year, original->getpostType(),postedBy,nullptr)                   
     {
         originalPost = original;
     }
 
-    Post* getOriginalPost() { return originalPost; }
+    Post* getOriginalPost() { 
+		return originalPost;
+	}
     void displayMemory()
  {
      cout << "~~~ " << getpostedBy() << " shared a memory ~~~ ...(";
@@ -482,8 +484,12 @@ public:
     void display() const override {
         cout << id << " - " << name << endl;
     }
- Post** getPosts() { return posts; }
- int getPostCount() { return postCount; }
+ Post** getPosts() { 
+	 return posts;
+ }
+ int getPostCount() { 
+	 return postCount;
+ }
     ~Page() {
         delete[] posts;
     }
@@ -491,9 +497,7 @@ public:
 
 //functions:
 void viewPost(const char* postID, Post** posts, int postCount)
-
 {
-
     bool found = false;
     for (int i = 0; i < postCount; i++)
     {
@@ -507,10 +511,8 @@ void viewPost(const char* postID, Post** posts, int postCount)
     }
     if (!found) cout << "Post not found\n";
 }
-void likePost(const char* postID, Post** posts,
-    int postCount, const char* userID)
+void likePost(const char* postID, Post** posts, int postCount, const char* userID)
 {
-
     for (int i = 0; i < postCount; i++)
     {
         if (strcmp(posts[i]->getId(), postID) == 0)
@@ -532,9 +534,7 @@ void likePost(const char* postID, Post** posts,
     }
     cout << "Post not found!\n";
 }
-void seeYourMemories(Post** posts, int postCount,
-    const char* currentUserID,
-    int sysDay, int sysMonth, int sysYear)
+void seeYourMemories(Post** posts, int postCount, const char* currentUserID, int sysDay, int sysMonth, int sysYear)
 {
     cout << "We hope you enjoy looking back...\n";
     bool found = false;
@@ -542,8 +542,8 @@ void seeYourMemories(Post** posts, int postCount,
     for (int i = 0; i < postCount; i++)
     {
 
-        if (strcmp(posts[i]->getpostedBy(), currentUserID) != 0) continue;
-
+        if (strcmp(posts[i]->getpostedBy(), currentUserID) != 0) 
+			continue;
 
         if (posts[i]->getday() == sysDay &&
             posts[i]->getmonth() == sysMonth &&
@@ -556,7 +556,8 @@ void seeYourMemories(Post** posts, int postCount,
             found = true;
         }
     }
-    if (!found) cout << "No memories found.\n";
+    if (!found) 
+		cout << "No memories found.\n";
 }
 
 void viewLikedList(const char* postID, Post** posts, int postCount)
@@ -579,8 +580,7 @@ void viewLikedList(const char* postID, Post** posts, int postCount)
     cout << "Post not found!\n";
 }
 
-void postComment(const char* postID, const char* userID,
-    const char* text, Post** posts, int postCount)
+void postComment(const char* postID, const char* userID, const char* text, Post** posts, int postCount)
 {
     for (int i = 0; i < postCount; i++)
     {
@@ -595,16 +595,13 @@ void postComment(const char* postID, const char* userID,
     }
     cout << "Post not found!\n";
 }
-void shareMemory(const char* postID, const char* userID,
-    const char* text, Post** posts, int postCount,
-    int sysDay, int sysMonth, int sysYear)
+void shareMemory(const char* postID, const char* userID,const char* text, Post** posts, int postCount,int sysDay, int sysMonth, int sysYear)
 {
     for (int i = 0; i < postCount; i++)
     {
         if (strcmp(posts[i]->getId(), postID) == 0)
         {
-            Memory* mem = new Memory("mem1", text, sysDay, sysMonth,
-                sysYear, userID, posts[i]);
+            Memory* mem = new Memory("mem1", text, sysDay, sysMonth, sysYear, userID, posts[i]);
             mem->displayMemory();
             delete mem;
             return;
