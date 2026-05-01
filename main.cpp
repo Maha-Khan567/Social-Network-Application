@@ -230,6 +230,13 @@ public:
 };
 
 // Member 1 code ended
+// Function forward declarations
+void viewPost(const char*, Post**, int);
+void likePost(const char*, Post**, int, const char*);
+void seeYourMemories(Post**, int, const char*, int, int, int);
+void viewLikedList(const char*, Post**, int);
+void postComment(const char*, const char*, const char*, Post**, int);
+void shareMemory(const char*, const char*, const char*, Post**, int, int, int, int);
 class Activity
 {
 	int type;
@@ -273,15 +280,19 @@ private:
    char *txt;
 public:
    Comment(const char*a=nullptr,const char* b = nullptr,const char* c = nullptr,const char* d = nullptr)
-   {
+   {   commentId = postId = postedBy = txt = nullptr;
+	   if (a) {
        commentId = new char[strlen(a)+1];
-       strcpy(commentId, a);
+       strcpy(commentId, a);}
+	if (b) {
        postId = new char[strlen(b) + 1];
-       strcpy(postId, b);
+       strcpy(postId, b);}
+	if (c) {
        postedBy = new char[strlen(c) + 1];
-       strcpy(postedBy, c);
+       strcpy(postedBy, c);}
+	if (d) {
        txt = new char[strlen(d) + 1];
-       strcpy(txt, d);
+       strcpy(txt, d);}
    }
    char* getcommentId()
    {
@@ -845,9 +856,7 @@ void Run() {
     } while (choice != 0);
 }
 ~SocialNetworkApp() {
-    for (int i = 0; i < commentCount; i++)
-    if (comments[i] != nullptr) 
-		delete comments[i];
+    
     delete[] comments;
     for (int i = 0; i < postCount; i++)
 		delete posts[i];
@@ -972,7 +981,6 @@ void loadFromFiles() {
         for (int j = 0; j < postCount; j++)
             if (strcmp(comments[i]->getpostId(), posts[j]->getId()) == 0) {
                 posts[j]->addComment(comments[i]);
-				 comments[i] = nullptr;
                 break;
             }
 
