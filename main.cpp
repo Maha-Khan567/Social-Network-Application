@@ -8,6 +8,7 @@
 	Roll No: 25L-0514
     GitHub: https://github.com/Maha-Khan567/Social-Network-Application
 */
+
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<cstring>
@@ -237,6 +238,7 @@ void seeYourMemories(Post**, int, const char*, int, int, int);
 void viewLikedList(const char*, Post**, int);
 void postComment(const char*, const char*, const char*, Post**, int);
 void shareMemory(const char*, const char*, const char*, Post**, int, int, int, int);
+//Activity class used to diplay activity in posts of type 2 
 class Activity
 {
 	int type;
@@ -270,6 +272,7 @@ public:
 }
 
 };
+//Comment class used to display comments
 class Comment
 {
 private:
@@ -323,7 +326,7 @@ public:
        delete[] txt;
    }
 };
-
+//Post class used to like comment and display a post
 class Post {
 private:
     
@@ -461,6 +464,7 @@ public:
     }
 };
 //A Memory is a Post having pointer to original post.
+//Memory class helps in displaying memories
 class Memory : public Post //inheritance
 {
 private:
@@ -491,7 +495,8 @@ public:
         
     }
 };
-
+//Page class is used to view page,post,and liked list 
+//add posts,like post,see memories,share memory,post comment
 class Page : public Entity {
 private:
     Post** posts;
