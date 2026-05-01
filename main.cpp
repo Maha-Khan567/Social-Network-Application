@@ -762,8 +762,8 @@ void loadFromFiles() {
     postCount = 0;
     for (int i = 0; i < pCount; i++) {
         char pId[20];
-		pText[300];
-		pPostedBy[20];
+		char pText[300];
+		char pPostedBy[20];
         int pDay, pMonth, pYear, pType;
         postFile >> pType >> pId >> pDay >> pMonth >> pYear;
         postFile.ignore();
@@ -795,9 +795,9 @@ void loadFromFiles() {
     commentCount = 0;
     for (int i = 0; i < cCount; i++) {
         char cId[20];
-		cPostId[20];
-		cPostedBy[20];
-		cTxt[300];
+		char cPostId[20];
+		char cPostedBy[20];
+		char cTxt[300];
         cmtFile >> cId >> cPostId >> cPostedBy;
         cmtFile.ignore();
         cmtFile.getline(cTxt, 300);
@@ -1002,148 +1002,6 @@ void shareMemory(const char* postID, const char* userID,
     cout << "Post not found!\n";
 }
 int main() {
-    
-	 //Reading data from Posts.txt
-    ifstream fin("Posts.txt");
-    if (!fin) {
-        cout << "Error! File not found!" << endl;
-        return 1;
-    }
-    else 
-        cout << "File Found!" << endl;
-    
-    int postCount;
-    fin >> postCount;
-    cout << postCount<<endl;
-    Post **posts;
-    posts = new Post * [postCount];
-    for (int i = 0; i < postCount; i++)
- {
-     char tempId[20], temptext[300], tempPostedBy[20];
-     int tempDay, tempMonth, tempYear, tempPostType;
-     
-     fin >> tempPostType >> tempId;
-     fin >> tempDay >> tempMonth >> tempYear;
-     fin.ignore();
-     fin.getline(temptext, 300);
-    
-     
-     Activity* act = nullptr;
-     if (tempPostType == 2) {
-         char tempActValue[100];
-         int tempActType;
-
-         fin >> tempActType;
-         fin.ignore();
-         fin.getline(tempActValue, 100);
-
-         act = new Activity(tempActType, tempActValue);
-     }
-     
-   
-     fin >> tempPostedBy;
-     posts[i] = new Post(tempId, temptext, tempDay, tempMonth,
-         tempYear, tempPostType, tempPostedBy, act);
-     
-     char temp[20];
-     while (fin >> temp) {
-         if (strcmp(temp, "-1") == 0) break;
-         posts[i]->addLike(temp);
-     }
-     
-     
-    
-  
- }
-    fin.close();
-    
-    for (int i = 0; i < postCount; i++)
- {
-     cout << posts[i]->getId() << " | "
-         << posts[i]->getday() << "/" << posts[i]->getmonth() << "/" << posts[i]->getyear() << " | "
-         << posts[i]->gettext() << " | ";
-
-     if (posts[i]->getactivity() != nullptr)
-         posts[i]->getactivity()->diplayActivity();
-
-     cout << " | By: " << posts[i]->getpostedBy() << " | Likes: ";
-
-     for (int j = 0; j < posts[i]->getlikedCount(); j++)
-         cout << posts[i]->getlikedBy(j) << " ";
-
-     cout << endl;
- }
-
- //Reading data from Comments.txt
-
-    ifstream in("Comments.txt");
-    if (!in) {
-        cout << "Error! File not found!" << endl;
-        return 1;
-    }
-    else
-        cout << "File Found!" << endl;
-    int commentCount;
-    in >> commentCount;
-    cout << commentCount<<endl;
-    Comment** comments;
-    comments = new Comment*[commentCount];
-    for (int i = 0; i < commentCount; i++) {
-     char tempCommentId[20];
-     char tempPostId[20];
-     char tempPostedBy[20];
-     char tempTxt[300];
-    
-     in >> tempCommentId;
-     in >> tempPostId;
-     in >> tempPostedBy;
-     in.ignore();
-     in.getline(tempTxt, sizeof(tempTxt));
-
-    
-     comments[i] = new Comment(tempCommentId, tempPostId, tempPostedBy, tempTxt);
- }
-
-   
-    in.close();
-    for (int i = 0; i < commentCount; i++)
-    {
-        cout << comments[i]->getcommentId() << " | "
-     << comments[i]->getpostId() << " | "
-     << comments[i]->getpostedBy() << " | "
-     << comments[i]->gettxt() << endl;
-    }
-	//linking the comment and the post class
-for (int i = 0; i < commentCount; i++)
-{
-    
-    for (int j = 0; j < postCount; j++)
-    {
-        if (strcmp(comments[i]->getpostId(), posts[j]->getId()) == 0)
-        {
-            posts[j]->addComment(comments[i]);
-            break;
-        }
-    }
-}
-
-//Verifyingg
-cout << "post1 comments:" << endl;
-for (int i = 0; i < posts[0]->getcommentCount(); i++)
-    posts[0]->getcomment(i)->displayComment();
- viewPost("post1", posts, postCount);
-
- viewLikedList("post5", posts, postCount);
- likePost("post5", posts, postCount, "u7");
- viewLikedList("post5", posts, postCount);
-
-
-
- viewPost("post4", posts, postCount);
-
- seeYourMemories(posts, postCount, "u7", 15, 11, 2017);
- shareMemory("post10", "u7", "Never thought I will be specialist...",
-     posts, postCount, 15, 11, 2017);
 	// all implementation in one go
     SocialNetworkApp app;
     app.loadFromFiles();
