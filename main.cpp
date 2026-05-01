@@ -1,4 +1,14 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+/*
+    Project: Social Network App
+    Course: Object Oriented Programming
+    Section: BCS-2F
+    Group Leader: Maha Khan 
+	Roll No: 25L-0809
+    Member 2: Amna Khalid 
+	Roll No: 25L-0514
+    GitHub: https://github.com/Maha-Khan567/Social-Network-Application
+*/
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<cstring>
 #include<fstream>
