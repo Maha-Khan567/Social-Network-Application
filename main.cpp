@@ -225,7 +225,7 @@ public:
             value = nullptr;
         }
 	}
-    void diplayActivity()
+    void displayActivity()
     {
         switch (type) {
         case 1: cout << "is feeling " << value;        break;
@@ -305,8 +305,8 @@ private:
     int commentCount;
 
 public:   
-    Post(char* pid, char* ptext, int pday, int pmonth, int pyear,
-        int ptype, char* ppostedBy, Activity* pact = nullptr)
+    Post(const char* pid,const char* ptext, int pday, int pmonth, int pyear,
+        int ptype,const char* ppostedBy, Activity* pact = nullptr)
     {
         id = new char[strlen(pid) + 1];
         strcpy(id, pid);
@@ -428,7 +428,7 @@ private:
     Post* originalPost;  
     
 public:
-    Memory(constchar* id,const char* text, int day, int month, int year,const
+    Memory(const char* id,const char* text, int day, int month, int year,const
         char* postedBy, Post* original)
         : Post(id, text, day, month, year,
             original->getpostType(),   
@@ -482,6 +482,8 @@ public:
     void display() const override {
         cout << id << " - " << name << endl;
     }
+ Post** getPosts() { return posts; }
+ int getPostCount() { return postCount; }
     ~Page() {
         delete[] posts;
     }
