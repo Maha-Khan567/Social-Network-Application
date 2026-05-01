@@ -486,6 +486,130 @@ public:
         delete[] posts;
     }
 };
+
+//functions:
+void viewPost(const char* postID, Post** posts, int postCount)
+
+{
+
+    bool found = false;
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            posts[i]->display();
+            found = true;
+            
+            break;
+        }
+    }
+    if (!found) cout << "Post not found\n";
+}
+void likePost(const char* postID, Post** posts,
+    int postCount, const char* userID)
+{
+
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+
+            for (int j = 0; j < posts[i]->getlikedCount(); j++)
+            {
+                if (strcmp(posts[i]->getlikedBy(j), userID) == 0)
+                {
+                    cout << "Already liked!\n";
+                    return;
+                }
+            }
+
+            posts[i]->addLike(userID);
+            cout << "Post liked!\n";
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
+void seeYourMemories(Post** posts, int postCount,
+    const char* currentUserID,
+    int sysDay, int sysMonth, int sysYear)
+{
+    cout << "We hope you enjoy looking back...\n";
+    bool found = false;
+
+    for (int i = 0; i < postCount; i++)
+    {
+
+        if (strcmp(posts[i]->getpostedBy(), currentUserID) != 0) continue;
+
+
+        if (posts[i]->getday() == sysDay &&
+            posts[i]->getmonth() == sysMonth &&
+            posts[i]->getyear() != sysYear)
+        {
+            int yearDiff = sysYear - posts[i]->getyear();
+            cout << "On this Day " << yearDiff << " Years Ago" << endl;
+            cout << "---" << endl;
+            posts[i]->display();
+            found = true;
+        }
+    }
+    if (!found) cout << "No memories found.\n";
+}
+
+void viewLikedList(const char* postID, Post** posts, int postCount)
+{
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            cout << "---------------------------------------" << endl;
+            cout << "Post Liked By:" << endl;
+            int count = posts[i]->getlikedCount();
+            if (count == 0)
+                cout << "No likes yet." << endl;
+            for (int j = 0; j < count; j++)
+                cout << posts[i]->getlikedBy(j) << endl;
+            cout << "---------------------------------------" << endl;
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
+
+void postComment(const char* postID, const char* userID,
+    const char* text, Post** posts, int postCount)
+{
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            char newId[20];  strcpy(newId, "cnew");
+            Comment* newComment = new Comment("cnew", postID, userID, text);
+            posts[i]->addComment(newComment);
+            cout << "Comment added!\n";
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
+void shareMemory(const char* postID, const char* userID,
+    const char* text, Post** posts, int postCount,
+    int sysDay, int sysMonth, int sysYear)
+{
+    for (int i = 0; i < postCount; i++)
+    {
+        if (strcmp(posts[i]->getId(), postID) == 0)
+        {
+            Memory* mem = new Memory("mem1", text, sysDay, sysMonth,
+                sysYear, userID, posts[i]);
+            mem->displayMemory();
+            delete mem;
+            return;
+        }
+    }
+    cout << "Post not found!\n";
+}
 class SocialNetworkApp {
 private:
 	User** users;
@@ -884,129 +1008,6 @@ void linkPostsToOwners() {
     }
 }
 };
-//functions:
-void viewPost(const char* postID, Post** posts, int postCount)
-
-{
-
-    bool found = false;
-    for (int i = 0; i < postCount; i++)
-    {
-        if (strcmp(posts[i]->getId(), postID) == 0)
-        {
-            posts[i]->display();
-            found = true;
-            
-            break;
-        }
-    }
-    if (!found) cout << "Post not found\n";
-}
-void likePost(const char* postID, Post** posts,
-    int postCount, const char* userID)
-{
-
-    for (int i = 0; i < postCount; i++)
-    {
-        if (strcmp(posts[i]->getId(), postID) == 0)
-        {
-
-            for (int j = 0; j < posts[i]->getlikedCount(); j++)
-            {
-                if (strcmp(posts[i]->getlikedBy(j), userID) == 0)
-                {
-                    cout << "Already liked!\n";
-                    return;
-                }
-            }
-
-            posts[i]->addLike(userID);
-            cout << "Post liked!\n";
-            return;
-        }
-    }
-    cout << "Post not found!\n";
-}
-void seeYourMemories(Post** posts, int postCount,
-    const char* currentUserID,
-    int sysDay, int sysMonth, int sysYear)
-{
-    cout << "We hope you enjoy looking back...\n";
-    bool found = false;
-
-    for (int i = 0; i < postCount; i++)
-    {
-
-        if (strcmp(posts[i]->getpostedBy(), currentUserID) != 0) continue;
-
-
-        if (posts[i]->getday() == sysDay &&
-            posts[i]->getmonth() == sysMonth &&
-            posts[i]->getyear() != sysYear)
-        {
-            int yearDiff = sysYear - posts[i]->getyear();
-            cout << "On this Day " << yearDiff << " Years Ago" << endl;
-            cout << "---" << endl;
-            posts[i]->display();
-            found = true;
-        }
-    }
-    if (!found) cout << "No memories found.\n";
-}
-
-void viewLikedList(const char* postID, Post** posts, int postCount)
-{
-    for (int i = 0; i < postCount; i++)
-    {
-        if (strcmp(posts[i]->getId(), postID) == 0)
-        {
-            cout << "---------------------------------------" << endl;
-            cout << "Post Liked By:" << endl;
-            int count = posts[i]->getlikedCount();
-            if (count == 0)
-                cout << "No likes yet." << endl;
-            for (int j = 0; j < count; j++)
-                cout << posts[i]->getlikedBy(j) << endl;
-            cout << "---------------------------------------" << endl;
-            return;
-        }
-    }
-    cout << "Post not found!\n";
-}
-
-void postComment(const char* postID, const char* userID,
-    const char* text, Post** posts, int postCount)
-{
-    for (int i = 0; i < postCount; i++)
-    {
-        if (strcmp(posts[i]->getId(), postID) == 0)
-        {
-            char newId[20];  strcpy(newId, "cnew");
-            Comment* newComment = new Comment("cnew", postID, userID, text);
-            posts[i]->addComment(newComment);
-            cout << "Comment added!\n";
-            return;
-        }
-    }
-    cout << "Post not found!\n";
-}
-void shareMemory(const char* postID, const char* userID,
-    const char* text, Post** posts, int postCount,
-    int sysDay, int sysMonth, int sysYear)
-{
-    for (int i = 0; i < postCount; i++)
-    {
-        if (strcmp(posts[i]->getId(), postID) == 0)
-        {
-            Memory* mem = new Memory("mem1", text, sysDay, sysMonth,
-                sysYear, userID, posts[i]);
-            mem->displayMemory();
-            delete mem;
-            return;
-        }
-    }
-    cout << "Post not found!\n";
-}
 int main() {
 	// all implementation in one go
     SocialNetworkApp app;
