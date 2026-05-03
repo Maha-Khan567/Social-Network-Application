@@ -789,6 +789,7 @@ void Run() {
         cout << "8. View Liked List\n";
         cout << "9. See Your Memories\n";
         cout << "10. Share Memory\n";
+		cout << "11. View Page\n";
         cout << "0. Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -850,6 +851,15 @@ void Run() {
 			cout << "Set a user first.\n"; 
 			break;
 		}
+		case 11:
+        cout << "Enter Page ID: ";
+          cin >> id;
+        {
+        Page* p = findPage(id);
+        if (p) p->viewPage();
+        else cout << "Page not found!\n";
+         }
+          break;
                cout << "Enter Post ID to share as memory: ";
 			cin >> id;
                cout << "Enter memory text: "; 
