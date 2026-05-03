@@ -989,6 +989,11 @@ void loadFromFiles() {
         cmtFile >> cId >> cPostId >> cPostedBy;
         cmtFile.ignore();
         cmtFile.getline(cTxt, 300);
+		// trim leading tabs and spaces
+        int start = 0;
+        while (cTxt[start] == ' ' || cTxt[start] == '\t')
+        start++;
+        memmove(cTxt, cTxt + start, strlen(cTxt + start) + 1);
         comments[commentCount++] = new Comment(cId, cPostId, cPostedBy, cTxt);
     }
     cmtFile.close();
