@@ -851,7 +851,15 @@ void Run() {
 			cout << "Set a user first.\n"; 
 			break;
 		}
-		case 11:
+		
+               cout << "Enter Post ID to share as memory: ";
+			cin >> id;
+               cout << "Enter memory text: "; 
+			cin.ignore(); 
+			getline(cin, text);
+               shareMemory(id.c_str(), currentUser->getID().c_str(), text.c_str(), posts, postCount, currentDate.getDay(), currentDate.getMonth(), currentDate.getYear()); 
+			break;
+			case 11:
         cout << "Enter Page ID: ";
           cin >> id;
         {
@@ -860,13 +868,6 @@ void Run() {
         else cout << "Page not found!\n";
          }
           break;
-               cout << "Enter Post ID to share as memory: ";
-			cin >> id;
-               cout << "Enter memory text: "; 
-			cin.ignore(); 
-			getline(cin, text);
-               shareMemory(id.c_str(), currentUser->getID().c_str(), text.c_str(), posts, postCount, currentDate.getDay(), currentDate.getMonth(), currentDate.getYear()); 
-			break;
         }
     } while (choice != 0);
 }
