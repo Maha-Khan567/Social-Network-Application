@@ -942,7 +942,8 @@ void loadFromFiles() {
 		char pText[300];
 		char pPostedBy[20];
         int pDay, pMonth, pYear, pType;
-        postFile >> pType >> pId >> pDay >> pMonth >> pYear;
+        postFile >> pType >> pId ;
+		postFile>> pDay >> pMonth >> pYear;
         postFile.ignore();
         postFile.getline(pText, 300);
         Activity* act = nullptr;
